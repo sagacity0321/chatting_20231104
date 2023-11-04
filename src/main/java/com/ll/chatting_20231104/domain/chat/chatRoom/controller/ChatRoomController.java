@@ -13,8 +13,21 @@ public class ChatRoomController {
     public String showRoom(
             @PathVariable final long roomId,
             @RequestParam(defaultValue = "Noname") String writerName
-    ){
+    ) {
         writerName = "lol";
-        return "chat room: %d \n writer: %s".formatted(roomId, writerName);
+        return "chat room: %d. writer: %s".formatted(roomId, writerName);
+    }
+
+    @GetMapping("/chat/room/make")
+    @ResponseBody
+    public String showmake(
+    ) {
+        return """
+                <form action="">
+                                    <input type="text" name="name" placeholder="방 이름">
+                                    <input type="submit" value="방 만들기">
+                                </form>
+                                """.stripIndent();
     }
 }
+
