@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
+
     @GetMapping("/{roomId}")
     @ResponseBody
     public String showRoom(
@@ -27,9 +28,10 @@ public class ChatRoomController {
     ) {
         return "domain/chat/chatRoom/make";
     }
+
     @PostMapping("/make")
     public String make(
-        final String name
+            final String name
     ) {
         chatRoomService.make(name);
         return "redirect:/chat/room/make?message=Chat room Created";
