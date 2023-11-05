@@ -1,14 +1,16 @@
 package com.ll.chatting_20231104.domain.chat.chatRoom.controller;
 
+import com.ll.chatting_20231104.domain.chat.chatRoom.entity.ChatMessage;
 import com.ll.chatting_20231104.domain.chat.chatRoom.entity.ChatRoom;
 import com.ll.chatting_20231104.domain.chat.chatRoom.service.ChatRoomService;
+import com.ll.chatting_20231104.global.rsdata.RsData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,13 +55,40 @@ public class ChatRoomController {
         return "domain/chat/chatRoom/list";
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class WriteResponseBody {
+        private Long chatMessageId;
+    }
+
+
     @PostMapping("/{roomId}/write")
-    public String write(
+    @ResponseBody
+    public RsData<WriteResponseBody> write(
             @PathVariable final long roomId,
-            final String writerName,
-            final String content
+            @RequestBody final WriteRequestBody requestBody
     ) {
-        chatRoomService.write(roomId, writerName, content);
-        return "redirect:/chat/room/" + roomId;
+        ChatMessage chatMessage = chatRoomService.write(roomId, requestBody.getWriterName(), requestBody.getContent());
+        return RsData.of("S-1", "%d번 메시지를 작성하였습니다.".formatted(chatMessage.getId()), new WriteResponseBody(chatMessage.getId()));
+    }
+
+    @Getter
+    @Setter
+    private static class WriteRequestBody {
+        private String writerName;
+        private String content;
+    }
+
+    @PostMapping("/{roomId}/messagesAfter/{fromChatMessageId}")
+    public RsData<GetMessagesAfterResponseBody> getMessagesAfter(
+            @PathVariable final long roomId,
+            @PathVariable final long fromChatMessageId
+    ) {
+        return null;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private class GetMessagesAfterResponseBody {
     }
 }

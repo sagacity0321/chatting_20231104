@@ -1,45 +1,99 @@
-<h1 th:text="|${roomId}번 채팅방|" ></h1 >
-<nav >
-	<a href="make" >채팅방 생성</a >
-	<a href="list" >채팅방 목록</a >
-</nav >
-<a onclick="return false;" href="https://www.naver.com" >https://www.naver.com</a >
+<h1 th:text="|${roomId}번 채팅방|"></h1>
 
-<script >
+<nav>
+	<a href="make">채팅방 생성</a>
+	<a href="list">채팅방 목록</a>
+</nav>
+
+<a onclick="return false;" href="https://www.naver.com">https://www.naver.com</a>
+
+<script th:inline="javascript">
+    const roomId = /*[[${roomId}]]*/ 0;
+    const lastChatMessageId = /*[[${room.chatMessages.size > 0 ? room.chatMessages.first.id : 0}]]*/ 0;
+</script>
+
+<script>
     function submitWriteForm(form) {
-        const writerName = form.writerName.value;
-        const content = form.content.value;
-        if (writerName.length === 0) {
-            alert("작성자 명을 입력해 주세요.");
+        form.writerName.value = form.writerName.value.trim();
+
+        if ( form.writerName.value.length == 0 ) {
+            alert('작성자 명을 입력해주세요.');
             form.writerName.focus();
             return;
         }
-        if (content.length === 0) {
-            alert("내용을 입력해 주세요.");
+
+        form.content.value = form.content.value.trim();
+
+        if ( form.content.value.length == 0 ) {
+            alert('내용을 입력해주세요.');
             form.content.focus();
             return;
         }
-        form.submit();
+
+        const action = `/chat/room/${roomId}/write`;
+
+        fetch(
+            action,
+            {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    writerName: form.writerName.value,
+                    content: form.content.value,
+                }),
+            }
+        ).then(
+            response => response.json()
+        ).then(
+            json => {
+                // 아무 작업도 하지 않아도 됩니다.
+            }
+        ).catch(error => alert(error));
+
+        form.content.value = '';
+        form.content.focus();
     }
-</script >
 
-<form onsubmit="submitWriteForm(this); return false;" th:action="|/chat/room/${roomId}/write|" method="POST" >
-	<label >
-		<input autocomplete="off" type="text" name="writerName" placeholder="작성자 명" >
-		<input autocomplete="off" type="text" name="content" placeholder="내용" >
-		<input type="submit" value="작성" >
-	
-	</label >
+    function loadMoreChatMessages() {
+        const action = `/chat/room/${roomId}/messagesAfter/${lastChatMessageId}`;
 
-</form >
+        fetch(
+            action,
+            {
+                method: 'GET',
+                headers: {
+                    'accept': 'application/json'
+                }
+            }
+        ).then(
+            response => response.json()
+        ).then(
+            json => {
 
-<div >
-	<ul >
-		<li th:each="chatMessage: ${room.chatMessages}" >
-			<span th:text="${chatMessage.writerName}" ></span >
-			:(<span th:text="${chatMessage.id}" ></span >)
-			<span th:text="${chatMessage.content}" ></span >
-		
-		</li >
-	</ul >
-</div >
+            }
+        ).catch(error => alert(error));
+    }
+</script>
+
+<form onsubmit="submitWriteForm(this); return false;" method="POST">
+	<input autocomplete="off" type="text" name="writerName" placeholder="작성자 명">
+	<input autocomplete="off" type="text" name="content" placeholder="내용">
+	<input type="submit" value="작성">
+</form>
+
+<div>
+	<div>
+		<button onclick="loadMoreChatMessages();" type="button">더 불러오기</button>
+	</div>
+	<ul>
+		<li th:each="chatMessage : ${room.chatMessages}">
+			<span th:text="${chatMessage.writerName}"></span>
+			:
+			(<span th:text="${chatMessage.id}"></span>)
+			<span th:text="${chatMessage.content}"></span>
+		</li>
+	</ul>
+</div>

@@ -2,11 +2,10 @@ package com.ll.chatting_20231104.domain.chat.chatRoom.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import static lombok.AccessLevel.PROTECTED;
 @AllArgsConstructor(access = PROTECTED)
 @SuperBuilder
 @ToString(callSuper = true)
-@EntityListeners(AuditingEntityListener.class)
 public class ChatRoom extends BaseEntity {
 
     private String name;
@@ -28,9 +26,10 @@ public class ChatRoom extends BaseEntity {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
+    @OrderBy("id DESC")
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
-    public void writeMessage(String writerName, String content) {
+    public ChatMessage writeMessage(String writerName, String content) {
         ChatMessage chatMessage = ChatMessage
                 .builder()
                 .chatRoom(this)
@@ -38,5 +37,6 @@ public class ChatRoom extends BaseEntity {
                 .content(content)
                 .build();
         chatMessages.add(chatMessage);
+        return chatMessage;
     }
 }
