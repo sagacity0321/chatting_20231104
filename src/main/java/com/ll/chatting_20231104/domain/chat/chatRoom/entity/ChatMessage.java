@@ -1,39 +1,23 @@
 package com.ll.chatting_20231104.domain.chat.chatRoom.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 
 @Entity
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PROTECTED)
-@Builder
-@EntityListeners(AuditingEntityListener.class)
-public class ChatMessage {
+@ToString(callSuper = true)
+public class ChatMessage extends BaseEntity {
     @ManyToOne
     private ChatRoom chatRoom;
-
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Getter
-    private long id;
-
-    @Getter
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @Getter
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
-
     @Getter
     private String writerName;
 

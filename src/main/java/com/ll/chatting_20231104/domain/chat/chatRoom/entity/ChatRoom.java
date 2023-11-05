@@ -1,46 +1,33 @@
 package com.ll.chatting_20231104.domain.chat.chatRoom.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.OneToMany;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PROTECTED)
-@Builder
+@SuperBuilder
+@ToString(callSuper = true)
 @EntityListeners(AuditingEntityListener.class)
-public class ChatRoom {
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Getter
-    private long id;
+public class ChatRoom extends BaseEntity {
 
-    @Getter
-    @CreatedDate
-    private LocalDateTime createDate;
-
-    @Getter
-    @LastModifiedDate
-    private LocalDateTime modifiedDate;
-
-    @Getter
     private String name;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @Getter
+    @ToString.Exclude
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public void writeMessage(String writerName, String content) {

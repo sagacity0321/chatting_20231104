@@ -5,7 +5,10 @@ import com.ll.chatting_20231104.domain.chat.chatRoom.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -42,8 +45,8 @@ public class ChatRoomController {
 
     @GetMapping("/list")
     public String showList(
-    Model model
-            ) {
+            Model model
+    ) {
         List<ChatRoom> chatRooms = chatRoomService.findAll();
         model.addAttribute("chatRooms", chatRooms);
 
